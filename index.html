@@ -3,147 +3,385 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AICE Video Studio — offline video editor for Windows</title>
-<meta name="description" content="AICE Video Studio is a desktop video editor that works entirely offline: captions, background removal, text to speech and 4K export on your own computer.">
+<title>AICE Video Studio: the offline video editor for Windows</title>
+<meta name="description" content="A full multi-track video editor that runs entirely on your PC. Word-timed captions, 200 caption animations, Urdu and English text, 4K export. No account, no uploads, no watermark.">
+<meta property="og:title" content="AICE Video Studio">
+<meta property="og:description" content="The offline video editor for Windows. Nothing leaves your computer.">
+<meta property="og:image" content="https://tulaibhasan.github.io/aice-video-studio-releases/img/hero.jpg">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='235 266 1131 1091'%3E%3Crect width='1600' height='1600' x='0' y='0' fill='%230a0a0b'/%3E%3Crect x='385' y='266' width='831' height='18' fill='%23ededea'/%3E%3Cpath fill='%23ededea' d='M642 323H959L1366 1357H1102L800 527L604 1062L800 858L745 993L509 1357H235Z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..700&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0e0f11;
-    --panel: #17191c;
-    --line: #26292e;
-    --text: #e8eaed;
-    --dim: #9aa0a6;
-    --accent: #22d3c5;
-    --accent-ink: #062b28;
+    --ink: #0a0a0b;
+    --paper: #ebebe6;
+    --bone: #ededea;
+    --mute: #8a8a85;
+    --mute-dark: #5c5c58;
+    --line: rgba(237, 237, 234, .14);
+    --line-dark: rgba(10, 10, 11, .14);
+    --orange: #ff5b1f;
+    --pad: clamp(16px, 4vw, 48px);
+    --wide: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
-  a { color: var(--accent); }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
-  header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .2px; }
-  .brand svg { width: 28px; height: 28px; }
-  nav a { color: var(--dim); text-decoration: none; margin-left: 20px; font-size: 14px; }
-  nav a:hover { color: var(--text); }
-  .hero { padding: 72px 0 40px; text-align: center; }
-  .hero h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.05; margin: 0 0 18px; letter-spacing: -1px; }
-  .hero h1 span { color: var(--accent); }
-  .hero p { color: var(--dim); font-size: clamp(16px, 2.2vw, 19px); max-width: 640px; margin: 0 auto 32px; line-height: 1.55; }
-  .btn { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: var(--accent-ink); text-decoration: none; font-weight: 700; padding: 16px 28px; border-radius: 12px; font-size: 17px; box-shadow: 0 10px 40px rgba(34,211,197,.25); }
-  .btn:hover { filter: brightness(1.06); }
-  .btn svg { width: 20px; height: 20px; }
-  .sub { color: var(--dim); font-size: 13px; margin-top: 14px; }
-  .shot { display: block; width: 100%; max-width: 960px; height: auto; margin: 48px auto 0; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
-  .steps { counter-reset: s; list-style: none; padding: 0; margin: 0 0 64px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .steps li { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; color: var(--dim); font-size: 14px; line-height: 1.6; }
-  .steps li::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(34,211,197,.12); color: var(--accent); font-weight: 700; margin-bottom: 10px; }
-  .steps strong { color: var(--text); }
-  h2.sec { font-size: 26px; margin: 0 0 18px; }
-  .features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 64px 0; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
-  .card h3 { margin: 12px 0 8px; font-size: 17px; }
-  .card p { margin: 0; color: var(--dim); font-size: 14px; line-height: 1.55; }
-  .icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(34,211,197,.12); display: grid; place-items: center; }
-  .icon svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .more { padding: 0 0 64px; }
-  .more h2 { font-size: 26px; margin: 0 0 18px; }
-  .more ul { columns: 2; gap: 32px; padding-left: 18px; color: var(--dim); line-height: 1.9; margin: 0; }
-  .req { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 64px; color: var(--dim); font-size: 14px; line-height: 1.7; }
-  .req strong { color: var(--text); }
-  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--dim); font-size: 13px; line-height: 1.6; }
-  @media (max-width: 860px) { .features { grid-template-columns: repeat(2, 1fr); } .steps { grid-template-columns: 1fr; } }
-  @media (max-width: 560px) { .features { grid-template-columns: 1fr; } .more ul { columns: 1; } nav { display: none; } }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--ink); color: var(--bone); font-family: var(--wide); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; height: auto; }
+
+  .mono { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  .display { font-stretch: 125%; font-weight: 700; text-transform: uppercase; letter-spacing: -.025em; line-height: .92; margin: 0; }
+  .wrap { padding: 0 var(--pad); max-width: 1440px; margin: 0 auto; }
+  .light { background: var(--paper); color: var(--ink); }
+  .label { display: flex; gap: 14px; color: var(--mute); }
+  .light .label { color: var(--mute-dark); }
+
+  /* Header */
+  header { position: fixed; inset: 0 0 auto 0; z-index: 10; mix-blend-mode: difference; color: #fff; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 76px; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .brand svg { width: 30px; height: 29px; fill: currentColor; }
+  .brand b { font-stretch: 125%; font-weight: 700; font-size: 19px; letter-spacing: -.01em; }
+  .brand span { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; opacity: .7; padding-left: 12px; border-left: 1px solid currentColor; }
+  nav { display: flex; align-items: center; gap: 28px; }
+  nav a.n { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; text-decoration: none; opacity: .75; }
+  nav a.n:hover { opacity: 1; }
+  .pill { border: 1px solid currentColor; border-radius: 999px; padding: 8px 16px; font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+  .pill:hover { background: #fff; color: #000; }
+
+  /* Hero */
+  .hero { position: relative; padding-top: 150px; background: radial-gradient(70% 55% at 50% 30%, #1c1c1e 0%, var(--ink) 70%); }
+  .hero .label { margin-bottom: 28px; }
+  .hero h1 { font-size: clamp(40px, 7.6vw, 136px); }
+  .hero h1 em { font-style: normal; color: transparent; -webkit-text-stroke: 1.5px var(--bone); }
+  .hero-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: end; margin-top: 44px; padding-bottom: 64px; border-bottom: 1px solid var(--line); }
+  .hero-row p { margin: 0; font-size: clamp(18px, 1.8vw, 22px); line-height: 1.4; max-width: 560px; color: #c9c9c4; }
+  .cta { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 12px; background: var(--orange); color: #fff; text-decoration: none; font-weight: 600; font-size: 16px; padding: 17px 26px; border-radius: 999px; transition: transform .2s, background .2s; }
+  .btn:hover { background: #ff7040; transform: translateY(-1px); }
+  .btn svg { width: 18px; height: 18px; }
+  .link { font-size: 15px; text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 3px; }
+  .link:hover { color: var(--orange); }
+  .meta { color: var(--mute); margin-top: 14px; }
+
+  .stage { position: relative; padding: 72px 0 0; }
+  .stage::before { content: ""; position: absolute; left: 10%; right: 10%; top: 40px; height: 60%; background: radial-gradient(50% 50% at 50% 50%, rgba(255, 91, 31, .18), transparent 70%); filter: blur(40px); pointer-events: none; }
+  .frame { position: relative; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; box-shadow: 0 40px 120px rgba(0, 0, 0, .6); }
+  .frame .bar { display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--line); background: #111113; color: var(--mute); }
+
+  /* Numbers */
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--line); margin-top: 88px; }
+  .stat { padding: 28px 20px 40px 0; border-right: 1px solid var(--line); }
+  .stat + .stat { padding-left: 20px; }
+  .stat:last-child { border-right: 0; }
+  .stat b { display: block; font-stretch: 125%; font-weight: 700; font-size: clamp(30px, 3.6vw, 52px); letter-spacing: -.03em; line-height: 1; margin: 14px 0 0; }
+
+  /* Statement */
+  .statement { padding: 140px 0 150px; }
+  .statement p { font-size: clamp(28px, 4vw, 56px); line-height: 1.08; letter-spacing: -.02em; margin: 40px 0 0; max-width: 1180px; }
+  .statement p span { color: #8f8f89; }
+
+  /* Features */
+  .features { padding: 130px 0 40px; }
+  .features h2 { font-size: clamp(40px, 7vw, 112px); margin-top: 28px; }
+  .feature { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(24px, 5vw, 80px); align-items: center; padding: 64px 0; border-top: 1px solid var(--line); }
+  .feature.first { margin-top: 80px; }
+  .feature.flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .feature.flip .copy { order: 2; }
+  .feature h3, .wideshot h3 { font-stretch: 125%; font-weight: 700; text-transform: uppercase; font-size: clamp(26px, 2.8vw, 40px); letter-spacing: -.02em; line-height: 1; margin: 18px 0 18px; }
+  .feature p { color: #b4b4ae; font-size: 17px; margin: 0; max-width: 460px; }
+  .feature ul { list-style: none; padding: 0; margin: 26px 0 0; border-top: 1px solid var(--line); max-width: 460px; }
+  .feature li { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; display: flex; justify-content: space-between; gap: 16px; }
+  .feature li span { color: var(--mute); font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+  .shot { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .wideshot { padding: 64px 0 120px; border-top: 1px solid var(--line); }
+  .wideshot .head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+  .wideshot h3 { margin-bottom: 0; }
+  .wideshot p { color: #b4b4ae; max-width: 460px; margin: 0; }
+
+  /* Everything list */
+  .all { padding: 130px 0; }
+  .all h2 { font-size: clamp(36px, 5.6vw, 88px); margin-top: 28px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 64px; border-top: 1px solid var(--line-dark); }
+  .cell { padding: 26px 22px 34px 0; border-bottom: 1px solid var(--line-dark); }
+  .cell:not(:nth-child(4n)) { border-right: 1px solid var(--line-dark); }
+  .cell:not(:nth-child(4n+1)) { padding-left: 22px; }
+  .cell b { display: block; font-size: 18px; font-weight: 600; margin: 14px 0 6px; letter-spacing: -.01em; }
+  .cell p { margin: 0; color: #55554f; font-size: 15px; }
+
+  /* Updates */
+  .updates { padding: 130px 0; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); margin-top: 28px; }
+  .updates h2 { font-size: clamp(40px, 6.4vw, 104px); }
+  .updates .lead { font-size: clamp(18px, 1.6vw, 21px); color: #c9c9c4; margin: 0 0 32px; line-height: 1.45; }
+  .updates .lead b { color: var(--bone); font-weight: 600; }
+  .log { border-top: 1px solid var(--line); }
+  .log div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .log .mono { color: var(--orange); padding-top: 3px; }
+  .log p { margin: 0; color: #c9c9c4; }
+
+  /* Install */
+  .install { padding: 130px 0; }
+  .install h2 { font-size: clamp(40px, 6.4vw, 104px); margin-top: 28px; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 64px; border-top: 1px solid var(--line-dark); }
+  .steps > div { padding: 28px 28px 40px 0; }
+  .steps > div + div { padding-left: 28px; border-left: 1px solid var(--line-dark); }
+  .steps .num { font-stretch: 125%; font-weight: 700; font-size: 64px; line-height: 1; letter-spacing: -.04em; color: var(--orange); }
+  .steps h4 { font-size: 20px; margin: 22px 0 8px; letter-spacing: -.01em; }
+  .steps p { margin: 0; color: #55554f; }
+  .steps p b { color: var(--ink); font-weight: 600; }
+  .req { margin-top: 56px; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line-dark); }
+  .req div { padding: 18px 18px 0 0; }
+  .req div span { display: block; color: var(--mute-dark); margin-bottom: 6px; }
+
+  /* Final */
+  .final { padding: 150px 0 0; }
+  .final h2 { font-size: clamp(56px, 13vw, 220px); margin-top: 28px; }
+  .final .cta { margin-top: 48px; }
+  footer { border-top: 1px solid var(--line); margin-top: 120px; padding: 28px 0 40px; display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; color: var(--mute); }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--bone); }
+  footer .links { display: flex; gap: 24px; flex-wrap: wrap; }
+
+  /* Motion */
+  .rise { opacity: 0; transform: translateY(24px); transition: opacity .9s cubic-bezier(.2, .7, .2, 1), transform .9s cubic-bezier(.2, .7, .2, 1); }
+  .rise.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rise { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+
+  @media (max-width: 960px) {
+    nav a.n { display: none; }
+    .hero { padding-top: 120px; }
+    .hero-row { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stat, .stat + .stat { padding: 22px 16px 26px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .stat:nth-child(odd) { border-right: 1px solid var(--line); }
+    .stat:nth-child(even) { padding-left: 16px; }
+    .stat:last-child { grid-column: 1 / -1; border-right: 0; }
+    .feature, .feature.flip { grid-template-columns: 1fr; }
+    .feature.flip .copy { order: 0; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .cell, .cell:not(:nth-child(4n+1)) { padding: 22px 16px 26px 0; border-right: 0; }
+    .cell:nth-child(odd) { border-right: 1px solid var(--line-dark); }
+    .cell:nth-child(even) { padding-left: 16px; }
+    .split { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .steps > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--line-dark); }
+    .req { grid-template-columns: repeat(2, 1fr); }
+    .req div { padding-bottom: 16px; }
+  }
+  @media (max-width: 560px) {
+    .brand span { display: none; }
+    .grid { grid-template-columns: 1fr; }
+    .cell:nth-child(odd) { border-right: 0; }
+    .cell:nth-child(even) { padding-left: 0; }
+    .frame .bar .mono:last-child { display: none; }
+    .log div { grid-template-columns: 1fr; gap: 4px; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="brand">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#15161a"/><path d="M8 25 L16 7 L24 25" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.3 18.6 H19.7" stroke="#22d3c5" stroke-width="3.6" stroke-linecap="round"/></svg>
-      AICE Video Studio
-    </div>
-    <nav><a href="#features">Features</a><a href="#install">Install</a><a href="#requirements">Requirements</a><a href="https://aiceservices.com">AICE Services</a></nav>
-  </header>
 
-  <section class="hero">
-    <h1>Edit video on your computer.<br><span>Nothing leaves it.</span></h1>
-    <p>A familiar multi-track editor with captions, background removal, text to speech and 4K export — every tool runs offline, with no account and no watermark.</p>
-    <a class="btn" id="dl" href="https://github.com/tulaibhasan/aice-video-studio-releases/releases/latest">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>
-      Download for Windows (64-bit)
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="AICE Video Studio">
+      <svg viewBox="235 266 1131 1091" aria-hidden="true"><rect x="385" y="266" width="831" height="18"/><path d="M642 323H959L1366 1357H1102L800 527L604 1062L800 858L745 993L509 1357H235Z"/></svg>
+      <b>AICE</b><span>Video Studio</span>
     </a>
-    <div class="sub"><span id="ver">Free download</span> · Windows 10 and 11 · <a href="https://github.com/tulaibhasan/aice-video-studio-releases/releases/latest">All downloads</a></div>
-    <img class="shot" src="screenshot.jpg" alt="AICE Video Studio editing a video: media library, player, details panel and timeline">
+    <nav>
+      <a class="n" href="#features">Features</a>
+      <a class="n" href="#updates">Updates</a>
+      <a class="n" href="#install">Install</a>
+      <a class="pill dl" href="https://github.com/tulaibhasan/aice-video-studio-releases/releases/latest">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div class="label mono rise"><span>AICE Video Studio</span><span>/</span><span class="ver">For Windows</span></div>
+      <h1 class="display rise">Edit offline.<br><em>Export</em> in 4K.</h1>
+      <div class="hero-row">
+        <p class="rise">A complete multi-track video editor that runs on your own PC. Captions, effects, Urdu and English text, voiceover and export, with no account, no uploads and no watermark.</p>
+        <div class="rise">
+          <div class="cta">
+            <a class="btn dl" href="https://github.com/tulaibhasan/aice-video-studio-releases/releases/latest">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+              Download for Windows
+            </a>
+            <a class="link" href="https://github.com/tulaibhasan/aice-video-studio-releases/releases">Release notes</a>
+          </div>
+          <div class="meta mono">Free · Windows 10 &amp; 11 · 64-bit</div>
+        </div>
+      </div>
+
+      <div class="stage rise">
+        <div class="frame">
+          <div class="bar"><span class="mono">AICE Video Studio</span><span class="mono">Untitled project · 1920 × 1080</span></div>
+          <img src="img/hero.jpg" width="1800" height="1075" alt="AICE Video Studio with the effects library, the player showing a text clip, text settings and a multi-track timeline">
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat rise"><span class="mono label">Uploads</span><b>0</b></div>
+        <div class="stat rise"><span class="mono label">Max export</span><b>4K60</b></div>
+        <div class="stat rise"><span class="mono label">Caption animations</span><b>200</b></div>
+        <div class="stat rise"><span class="mono label">Effects + transitions</span><b>189</b></div>
+        <div class="stat rise"><span class="mono label">Font styles</span><b>290</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="light statement">
+    <div class="wrap">
+      <div class="label mono rise"><span>(01)</span><span>Private by design</span></div>
+      <p class="rise">Your footage never leaves your computer. <span>Speech recognition, background removal, voices and export all run locally, so it works on a plane, on slow internet, and on client work you can't upload.</span></p>
+    </div>
   </section>
 
   <section class="features" id="features">
-    <div class="card">
-      <div class="icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
-      <h3>100% offline privacy</h3>
-      <p>Speech recognition, cutouts and voices run on your machine. No uploads, no sign-in.</p>
-    </div>
-    <div class="card">
-      <div class="icon"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
-      <h3>Native Rust speed</h3>
-      <p>A compact native program that opens fast and previews smoothly on everyday laptops.</p>
-    </div>
-    <div class="card">
-      <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 14h18M8 14v6M14 14v6"/></svg></div>
-      <h3>Familiar timeline controls</h3>
-      <p>Tracks, keyframes, speed curves, transitions and shortcuts that work the way you expect.</p>
-    </div>
-    <div class="card">
-      <div class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
-      <h3>4K export, no watermark</h3>
-      <p>Up to 4K at 60 fps in H.264, H.265 or AV1, with presets for every major platform.</p>
+    <div class="wrap">
+      <div class="label mono rise"><span>(02)</span><span>Features</span></div>
+      <h2 class="display rise">Everything to<br>finish the video.</h2>
+
+      <div class="feature first rise">
+        <div class="copy">
+          <div class="label mono"><span>01 / 03</span><span>Captions</span></div>
+          <h3>Word-timed captions</h3>
+          <p>Transcribe speech on your PC and get captions timed to every word, then style them with templates and animations.</p>
+          <ul>
+            <li>Caption animations <span>200</span></li>
+            <li>Urdu and English in one line <span>Right to left</span></li>
+            <li>Filler-word removal, find and replace <span>Editing</span></li>
+          </ul>
+        </div>
+        <div class="shot"><img src="img/captions.jpg" width="1000" height="612" loading="lazy" alt="A caption selected in the player with the caption animation grid open"></div>
+      </div>
+
+      <div class="feature flip rise">
+        <div class="copy">
+          <div class="label mono"><span>02 / 03</span><span>Look</span></div>
+          <h3>Effects, filters, colour</h3>
+          <p>Drop looks onto any clip and see them live. Fine-tune with colour wheels, curves, HSL and LUTs.</p>
+          <ul>
+            <li>Video effects <span>95</span></li>
+            <li>Transitions <span>94</span></li>
+            <li>In, out and combo animations <span>75</span></li>
+          </ul>
+        </div>
+        <div class="shot"><img src="img/effects.jpg" width="800" height="612" loading="lazy" alt="The effects library with live previews"></div>
+      </div>
+
+      <div class="wideshot rise">
+        <div class="head">
+          <div>
+            <div class="label mono"><span>03 / 03</span><span>Timeline</span></div>
+            <h3>A timeline that keeps up</h3>
+          </div>
+          <p>Stack video, text, sticker and audio tracks with keyframes, speed curves, groups, markers and beat snapping. Native code, so it opens fast on an everyday laptop.</p>
+        </div>
+        <div class="shot"><img src="img/timeline.jpg" width="1800" height="415" loading="lazy" alt="Multi-track timeline with video, text and sticker clips"></div>
+      </div>
     </div>
   </section>
 
-  <section class="more">
-    <h2>Everything you need to finish a video</h2>
-    <ul>
-      <li>Word-timed auto captions and caption templates</li>
-      <li>Bilingual captions and auto lyrics</li>
-      <li>Text to speech with your Windows voices</li>
-      <li>Background removal and chroma key</li>
-      <li>Colour wheels, curves, HSL and LUTs</li>
-      <li>One-click colour, volume and voice fixes</li>
-      <li>Effects, filters, transitions and stylize looks</li>
-      <li>Keyframes, masks and motion tracking</li>
-      <li>Screen recording and voiceover</li>
-      <li>Graphics-card export (NVENC, Quick Sync, AMF) when available</li>
-      <li>Opens CapCut projects (unencrypted drafts)</li>
-    </ul>
+  <section class="light all">
+    <div class="wrap">
+      <div class="label mono rise"><span>(03)</span><span>And more</span></div>
+      <h2 class="display rise">Built in.<br>Not bolted on.</h2>
+      <div class="grid">
+        <div class="cell rise"><span class="mono label">Voice</span><b>Text to speech</b><p>Voiceover from the voices already in Windows.</p></div>
+        <div class="cell rise"><span class="mono label">Cutout</span><b>Background removal</b><p>Remove backgrounds on your PC, or key out a green screen.</p></div>
+        <div class="cell rise"><span class="mono label">One click</span><b>Fix colour and sound</b><p>Even out exposure, loudness and voice across every clip.</p></div>
+        <div class="cell rise"><span class="mono label">Motion</span><b>Tracking and masks</b><p>Pin text to a moving subject; shape masks with feathering.</p></div>
+        <div class="cell rise"><span class="mono label">Record</span><b>Screen and voice</b><p>Capture your screen or a voiceover straight into the project.</p></div>
+        <div class="cell rise"><span class="mono label">Speed</span><b>Hardware export</b><p>Uses Intel, NVIDIA or AMD video encoders when your PC has one.</p></div>
+        <div class="cell rise"><span class="mono label">Formats</span><b>H.264, H.265, AV1</b><p>MP4 or MOV, GIF, audio only and SRT captions, with platform presets.</p></div>
+        <div class="cell rise"><span class="mono label">Import</span><b>Open CapCut drafts</b><p>Bring in unencrypted CapCut desktop projects and keep editing.</p></div>
+      </div>
+    </div>
   </section>
 
-  <section id="install">
-    <h2 class="sec">Install in a minute</h2>
-    <ol class="steps">
-      <li><strong>Download</strong> the installer with the button above.</li>
-      <li><strong>Open it.</strong> If Windows says "Windows protected your PC", click <strong>More info</strong>, then <strong>Run anyway</strong>. No administrator password is needed.</li>
-      <li><strong>Stay up to date automatically.</strong> When a new version comes out, the app shows <strong>Update now</strong> at the top and installs it for you.</li>
-    </ol>
+  <section class="updates" id="updates">
+    <div class="wrap">
+      <div class="label mono rise"><span>(04)</span><span>Updates</span></div>
+      <div class="split">
+        <h2 class="display rise">Always<br>current.</h2>
+        <div class="rise">
+          <p class="lead">New features ship often. The app checks once a day, shows <b>Update now</b> when a version is ready, confirms the download is genuine, and installs it when you close the app. You never reinstall by hand.</p>
+          <div class="log">
+            <div><span class="mono">v0.2.0</span><p>Windows installer, automatic updates, ffmpeg included.</p></div>
+            <div><span class="mono">Nov 2026</span><p>290 font styles; Urdu text and captions joined and right to left.</p></div>
+            <div><span class="mono">Nov 2026</span><p>200 caption animations; new player controls and on-canvas handles.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <section class="req" id="requirements">
-    <strong>Requirements.</strong> Windows 10 or 11 (64-bit). Everything the app needs, including ffmpeg, comes in the installer. Optional models for captions and background removal are downloaded only when you choose to.
+  <section class="light install" id="install">
+    <div class="wrap">
+      <div class="label mono rise"><span>(05)</span><span>Install</span></div>
+      <h2 class="display rise">Up and running<br>in a minute.</h2>
+      <div class="steps">
+        <div class="rise"><div class="num">01</div><h4>Download</h4><p>Get the installer from any button on this page. It includes everything the app needs.</p></div>
+        <div class="rise"><div class="num">02</div><h4>Open it</h4><p>If Windows shows "Windows protected your PC", click <b>More info</b>, then <b>Run anyway</b>. No administrator password needed.</p></div>
+        <div class="rise"><div class="num">03</div><h4>Start editing</h4><p>Find AICE Video Studio in the Start menu. Updates arrive on their own from then on.</p></div>
+      </div>
+      <div class="req mono">
+        <div><span>System</span>Windows 10 / 11, 64-bit</div>
+        <div><span>Account</span>None needed</div>
+        <div><span>Price</span>Free, no watermark</div>
+        <div><span>Internet</span>Only for updates and optional models</div>
+      </div>
+    </div>
   </section>
-</div>
-<footer>
-  <div class="wrap">
-    AICE Video Studio is an independent project by AICE Services (<a href="https://aiceservices.com">aiceservices.com</a>). Not affiliated with ByteDance or CapCut.
-  </div>
-</footer>
+
+  <section class="final">
+    <div class="wrap">
+      <div class="label mono rise"><span>(06)</span><span>Get it</span></div>
+      <h2 class="display rise">Start<br>editing.</h2>
+      <div class="cta rise">
+        <a class="btn dl" href="https://github.com/tulaibhasan/aice-video-studio-releases/releases/latest">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          Download for Windows
+        </a>
+        <span class="mono ver2" style="color:var(--mute)">Free · No account</span>
+      </div>
+      <footer class="mono">
+        <span>© 2026 AICE Services · Not affiliated with ByteDance or CapCut</span>
+        <span class="links">
+          <a href="https://aiceservices.com">aiceservices.com ↗</a>
+          <a href="https://github.com/tulaibhasan/aice-video-studio-releases/releases">All releases ↗</a>
+          <a href="mailto:mthasan@aiceservices.com">Contact</a>
+        </span>
+      </footer>
+    </div>
+  </section>
+</main>
+
 <script>
-  // Point the button straight at the newest installer (falls back to the releases page).
+  // Reveal on scroll.
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll(".rise").forEach(el => io.observe(el));
+
+  // Point every download button straight at the newest installer and show its version.
   fetch("https://api.github.com/repos/tulaibhasan/aice-video-studio-releases/releases/latest")
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(rel => {
       const a = (rel.assets || []).find(x => /-setup\.exe$/i.test(x.name));
-      if (a) document.getElementById("dl").href = a.browser_download_url;
-      if (rel.tag_name) document.getElementById("ver").textContent = "Free download, version " + rel.tag_name.replace(/^v/, "");
+      if (a) document.querySelectorAll(".dl").forEach(el => el.href = a.browser_download_url);
+      if (rel.tag_name) {
+        const v = rel.tag_name.replace(/^v/, "");
+        document.querySelector(".ver").textContent = "Version " + v + " for Windows";
+        document.querySelector(".ver2").textContent = "Version " + v + " · Free · No account";
+        const mb = a ? Math.round(a.size / 1048576) + " MB · " : "";
+        document.querySelector(".meta").textContent = mb + "Free · Windows 10 & 11 · 64-bit";
+      }
     })
     .catch(() => {});
 </script>
